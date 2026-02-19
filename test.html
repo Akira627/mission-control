@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mission Control Dashboard Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #0f172a;
+            color: white;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success {
+            background: #10b981;
+        }
+        .error {
+            background: #ef4444;
+        }
+        .warning {
+            background: #f59e0b;
+        }
+    </style>
+</head>
+<body>
+    <h1>Mission Control Dashboard - API Test</h1>
+    
+    <div id="results">
+        <h2>Testing APIs...</h2>
+        <div id="test-projects" class="test-result">Testing Project API...</div>
+        <div id="test-gateway" class="test-result">Testing Gateway API...</div>
+        <div id="test-second-brain" class="test-result">Testing 2nd Brain API...</div>
+        <div id="test-command-center" class="test-result">Testing Command Center API...</div>
+        <div id="test-lockin" class="test-result">Checking lock-in files...</div>
+    </div>
+    
+    <script>
+        async function testAPI(url, elementId) {
+            try {
+                const response = await fetch(url, { method: 'HEAD' });
+                const element = document.getElementById(elementId);
+                if (response.ok) {
+                    element.textContent = `✓ ${url} - OK (${response.status})`;
+                    element.className = 'test-result success';
+                    return true;
+                } else {
+                    element.textContent = `✗ ${url} - Failed (${response.status})`;
+                    element.className = 'test-result error';
+                    return false;
+                }
+            } catch (error) {
+                const element = document.getElementById(elementId);
+                element.textContent = `✗ ${url} - Error: ${error.message}`;
+                element.className = 'test-result error';
+                return false;
+            }
+        }
+        
+        async function runTests() {
+            console.log('Starting API tests...');
+            
+            const tests = [
+                { url: 'http://localhost:3001/api/projects?action=list', id: 'test-projects' },
+                { url: 'http://localhost:18789/api/health', id: 'test-gateway' },
+                { url: 'http://localhost:3000', id: 'test-second-brain' },
+                { url: 'http://localhost:8081', id: 'test-command-center' }
+            ];
+            
+            let allPassed = true;
+            
+            for (const test of tests) {
+                const passed = await testAPI(test.url, test.id);
+                if (!passed) allPassed = false;
+                await new Promise(resolve => setTimeout(resolve, 500)); // Delay between tests
+            }
+            
+            // Test lock-in files
+            const lockinElement = document.getElementById('test-lockin');
+            try {
+                const response = await fetch('/api/last-lock-in');
+                if (response.ok) {
+                    lockinElement.textContent = '✓ Lock-in API available';
+                    lockinElement.className = 'test-result success';
+                } else {
+                    lockinElement.textContent = '⚠ Lock-in API not available (using fallback)';
+                    lockinElement.className = 'test-result warning';
+                }
+            } catch (error) {
+                lockinElement.textContent = '⚠ Lock-in API not available (using fallback)';
+                lockinElement.className = 'test-result warning';
+            }
+            
+            // Summary
+            const resultsDiv = document.getElementById('results');
+            const summary = document.createElement('div');
+            summary.className = `test-result ${allPassed ? 'success' : 'error'}`;
+            summary.textContent = allPassed 
+                ? '✅ All API tests passed! Dashboard should work correctly.'
+                : '❌ Some API tests failed. Dashboard may have limited functionality.';
+            resultsDiv.appendChild(summary);
+        }
+        
+        // Run tests when page loads
+        document.addEventListener('DOMContentLoaded', runTests);
+    </script>
+</body>
+</html>

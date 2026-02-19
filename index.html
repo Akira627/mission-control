@@ -8,6 +8,12 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- JavaScript files -->
+    <script src="assets/js/api.js" defer></script>
+    <script src="assets/js/actions.js" defer></script>
+    <script src="assets/js/dashboard.js" defer></script>
+    
     <!-- Custom styles -->
     <style>
         :root {
@@ -77,6 +83,81 @@
         .metric-card.success {
             border-left-color: #10b981;
         }
+        
+        /* Loading states */
+        .loading {
+            opacity: 0.7;
+            cursor: wait;
+        }
+        
+        .action-spinner {
+            display: inline-block;
+            margin-left: 8px;
+        }
+        
+        .action-spinner.hidden {
+            display: none;
+        }
+        
+        /* Toast notifications */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            padding: 12px 16px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease;
+        }
+        
+        .toast-success {
+            background-color: #10b981;
+        }
+        
+        .toast-error {
+            background-color: #ef4444;
+        }
+        
+        .toast-warning {
+            background-color: #f59e0b;
+        }
+        
+        .toast-info {
+            background-color: #3b82f6;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        /* Offline indicator */
+        .offline-indicator {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background-color: #ef4444;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            z-index: 1000;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
     </style>
 </head>
 <body class="min-h-screen">
@@ -124,63 +205,67 @@
     <main class="container mx-auto px-4 py-6">
         <!-- Header Stats -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <div class="metric-card p-5 rounded-xl">
+            <div class="metric-card p-5 rounded-xl" id="projects-card">
                 <div class="flex justify-between items-start">
                     <div>
-                        <p class="text-gray-400 text-sm">Active Agents</p>
-                        <h3 class="text-2xl font-bold mt-1">12</h3>
+                        <p class="text-gray-400 text-sm">Active Projects</p>
+                        <h3 class="text-2xl font-bold mt-1" id="active-projects">--</h3>
+                        <p class="text-gray-400 text-xs mt-1">Total: <span id="total-projects">--</span></p>
                     </div>
                     <div class="w-12 h-12 bg-blue-900/30 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-robot text-blue-400 text-xl"></i>
+                        <i class="fas fa-project-diagram text-blue-400 text-xl"></i>
                     </div>
                 </div>
                 <div class="mt-3">
-                    <span class="text-green-400 text-sm"><i class="fas fa-arrow-up mr-1"></i>+2 today</span>
+                    <span class="text-green-400 text-sm" id="projects-status"><i class="fas fa-sync fa-spin mr-1"></i>Loading...</span>
                 </div>
             </div>
             
-            <div class="metric-card p-5 rounded-xl">
+            <div class="metric-card p-5 rounded-xl" id="subagents-card">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-gray-400 text-sm">Active Subagents</p>
+                        <h3 class="text-2xl font-bold mt-1" id="active-subagents">--</h3>
+                        <p class="text-gray-400 text-xs mt-1">Total: <span id="total-subagents">--</span></p>
+                    </div>
+                    <div class="w-12 h-12 bg-green-900/30 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-robot text-green-400 text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <span class="text-green-400 text-sm" id="subagents-status"><i class="fas fa-sync fa-spin mr-1"></i>Loading...</span>
+                </div>
+            </div>
+            
+            <div class="metric-card p-5 rounded-xl" id="system-health-card">
                 <div class="flex justify-between items-start">
                     <div>
                         <p class="text-gray-400 text-sm">System Health</p>
-                        <h3 class="text-2xl font-bold mt-1">98%</h3>
-                    </div>
-                    <div class="w-12 h-12 bg-green-900/30 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-heartbeat text-green-400 text-xl"></i>
-                    </div>
-                </div>
-                <div class="mt-3">
-                    <span class="text-green-400 text-sm"><i class="fas fa-check-circle mr-1"></i>All systems normal</span>
-                </div>
-            </div>
-            
-            <div class="metric-card warning p-5 rounded-xl">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <p class="text-gray-400 text-sm">Pending Tasks</p>
-                        <h3 class="text-2xl font-bold mt-1">7</h3>
-                    </div>
-                    <div class="w-12 h-12 bg-yellow-900/30 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-tasks text-yellow-400 text-xl"></i>
-                    </div>
-                </div>
-                <div class="mt-3">
-                    <span class="text-yellow-400 text-sm"><i class="fas fa-exclamation-circle mr-1"></i>3 high priority</span>
-                </div>
-            </div>
-            
-            <div class="metric-card p-5 rounded-xl">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <p class="text-gray-400 text-sm">Uptime (30d)</p>
-                        <h3 class="text-2xl font-bold mt-1">99.9%</h3>
+                        <h3 class="text-2xl font-bold mt-1" id="health-percentage">--%</h3>
+                        <p class="text-gray-400 text-xs mt-1"><span id="healthy-systems">--</span>/4 systems</p>
                     </div>
                     <div class="w-12 h-12 bg-purple-900/30 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-server text-purple-400 text-xl"></i>
+                        <i class="fas fa-heartbeat text-purple-400 text-xl"></i>
                     </div>
                 </div>
                 <div class="mt-3">
-                    <span class="text-green-400 text-sm"><i class="fas fa-chart-line mr-1"></i>+0.1% from last month</span>
+                    <span class="text-green-400 text-sm" id="health-status"><i class="fas fa-sync fa-spin mr-1"></i>Checking...</span>
+                </div>
+            </div>
+            
+            <div class="metric-card p-5 rounded-xl" id="lockin-card">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-gray-400 text-sm">Last Lock In</p>
+                        <h3 class="text-2xl font-bold mt-1" id="last-lockin-time">--:--</h3>
+                        <p class="text-gray-400 text-xs mt-1" id="last-lockin-date">--</p>
+                    </div>
+                    <div class="w-12 h-12 bg-yellow-900/30 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-lock text-yellow-400 text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <span class="text-green-400 text-sm" id="lockin-status"><i class="fas fa-sync fa-spin mr-1"></i>Loading...</span>
                 </div>
             </div>
         </div>
@@ -482,71 +567,99 @@
                 
                 <!-- Quick Actions -->
                 <div class="glass-card p-6 rounded-xl">
-                    <h2 class="text-lg font-bold mb-4">Quick Actions</h2>
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-bold">Quick Actions</h2>
+                        <span class="text-xs text-gray-400" id="actions-status">Ready</span>
+                    </div>
                     
                     <div class="grid grid-cols-2 gap-3">
-                        <button class="p-4 bg-blue-900/30 hover:bg-blue-900/50 rounded-xl flex flex-col items-center justify-center transition">
-                            <i class="fas fa-plus text-blue-400 text-xl mb-2"></i>
-                            <span class="text-sm">New Agent</span>
+                        <button class="p-4 bg-blue-900/30 hover:bg-blue-900/50 rounded-xl flex flex-col items-center justify-center transition quick-action"
+                                data-action="lock-it-in"
+                                data-original-text="Lock It In">
+                            <i class="fas fa-lock text-blue-400 text-xl mb-2 action-icon"></i>
+                            <span class="text-sm action-text">🔒 Lock It In</span>
+                            <span class="action-spinner hidden"><i class="fas fa-spinner fa-spin"></i></span>
                         </button>
                         
-                        <button class="p-4 bg-green-900/30 hover:bg-green-900/50 rounded-xl flex flex-col items-center justify-center transition">
-                            <i class="fas fa-play text-green-400 text-xl mb-2"></i>
-                            <span class="text-sm">Start All</span>
+                        <button class="p-4 bg-green-900/30 hover:bg-green-900/50 rounded-xl flex flex-col items-center justify-center transition quick-action"
+                                data-action="quick-research"
+                                data-original-text="Quick Research">
+                            <i class="fas fa-search text-green-400 text-xl mb-2 action-icon"></i>
+                            <span class="text-sm action-text">🔍 Quick Research</span>
+                            <span class="action-spinner hidden"><i class="fas fa-spinner fa-spin"></i></span>
                         </button>
                         
-                        <button class="p-4 bg-yellow-900/30 hover:bg-yellow-900/50 rounded-xl flex flex-col items-center justify-center transition">
-                            <i class="fas fa-pause text-yellow-400 text-xl mb-2"></i>
-                            <span class="text-sm">Pause All</span>
+                        <button class="p-4 bg-purple-900/30 hover:bg-purple-900/50 rounded-xl flex flex-col items-center justify-center transition quick-action"
+                                data-action="code-task"
+                                data-original-text="Code Task">
+                            <i class="fas fa-code text-purple-400 text-xl mb-2 action-icon"></i>
+                            <span class="text-sm action-text">💻 Code Task</span>
+                            <span class="action-spinner hidden"><i class="fas fa-spinner fa-spin"></i></span>
                         </button>
                         
-                        <button class="p-4 bg-purple-900/30 hover:bg-purple-900/50 rounded-xl flex flex-col items-center justify-center transition">
-                            <i class="fas fa-chart-bar text-purple-400 text-xl mb-2"></i>
-                            <span class="text-sm">Reports</span>
+                        <button class="p-4 bg-red-900/30 hover:bg-red-900/50 rounded-xl flex flex-col items-center justify-center transition quick-action"
+                                data-action="emergency-kill"
+                                data-original-text="Emergency Kill">
+                            <i class="fas fa-exclamation-triangle text-red-400 text-xl mb-2 action-icon"></i>
+                            <span class="text-sm action-text">🆘 Emergency Kill</span>
+                            <span class="action-spinner hidden"><i class="fas fa-spinner fa-spin"></i></span>
                         </button>
-                        
-                        <button class="p-4 bg-red-900/30 hover:bg-red-900/50 rounded-xl flex flex-col items-center justify-center transition">
-                            <i class="fas fa-exclamation-triangle text-red-400 text-xl mb-2"></i>
-                            <span class="text-sm">Emergency</span>
-                        </button>
-                        
-                        <button class="p-4 bg-gray-800 hover:bg-gray-700 rounded-xl flex flex-col items-center justify-center transition">
-                            <i class="fas fa-cog text-gray-400 text-xl mb-2"></i>
-                            <span class="text-sm">Settings</span>
-                        </button>
+                    </div>
+                    
+                    <div class="mt-4 text-xs text-gray-400">
+                        <p><i class="fas fa-info-circle mr-1"></i> Actions trigger real OpenClaw operations</p>
                     </div>
                 </div>
                 
                 <!-- System Info -->
                 <div class="glass-card p-6 rounded-xl">
-                    <h2 class="text-lg font-bold mb-4">System Information</h2>
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-bold">API Status</h2>
+                        <button class="text-xs bg-gray-800 hover:bg-gray-700 px-2 py-1 rounded transition" id="refresh-apis">
+                            <i class="fas fa-sync mr-1"></i>Refresh
+                        </button>
+                    </div>
                     
-                    <div class="space-y-3">
-                        <div class="flex justify-between">
-                            <span class="text-gray-400">Platform</span>
-                            <span class="font-medium">OpenClaw v2.4.1</span>
+                    <div class="space-y-3" id="api-status-list">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-400">Project Server</span>
+                            <span class="font-medium api-status" data-api="project-server">
+                                <i class="fas fa-sync fa-spin mr-1"></i>Checking...
+                            </span>
                         </div>
                         
-                        <div class="flex justify-between">
-                            <span class="text-gray-400">Uptime</span>
-                            <span class="font-medium">14 days, 6:32:15</span>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-400">Gateway Health</span>
+                            <span class="font-medium api-status" data-api="gateway">
+                                <i class="fas fa-sync fa-spin mr-1"></i>Checking...
+                            </span>
                         </div>
                         
-                        <div class="flex justify-between">
-                            <span class="text-gray-400">Total Agents</span>
-                            <span class="font-medium">12 / 25 max</span>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-400">2nd Brain</span>
+                            <span class="font-medium api-status" data-api="second-brain">
+                                <i class="fas fa-sync fa-spin mr-1"></i>Checking...
+                            </span>
                         </div>
                         
-                        <div class="flex justify-between">
-                            <span class="text-gray-400">Last Backup</span>
-                            <span class="font-medium">Today, 02:00 AM</span>
-                        </div>
-                        
-                        <div class="flex justify-between">
-                            <span class="text-gray-400">Next Maintenance</span>
-                            <span class="font-medium">Tomorrow, 03:00 AM</span>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-400">Command Center</span>
+                            <span class="font-medium api-status" data-api="command-center">
+                                <i class="fas fa-sync fa-spin mr-1"></i>Checking...
+                            </span>
                         </div>
                     </div>
+                    
+                    <div class="mt-4 pt-4 border-t border-gray-800">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-400">Last Updated</span>
+                            <span class="font-medium text-sm" id="data-timestamp">--:--:--</span>
+                        </div>
+                        <div class="mt-2 text-xs text-gray-400">
+                            <p><i class="fas fa-clock mr-1"></i> Auto-refreshes every 30 seconds</p>
+                        </div>
+                    </div>
+                </div>
                     
                     <div class="mt-6 pt-4 border-t border-gray-800">
                         <div class="flex justify-between items-center">
@@ -568,58 +681,437 @@
         </div>
     </main>
 
-    <!-- JavaScript for interactivity -->
+    <!-- Dashboard initialization -->
     <script>
-        // Simple refresh for demo purposes
-        function refreshData() {
-            // Simulate data refresh
-            const timeElement = document.querySelector('footer p');
-            if (timeElement) {
-                const now = new Date();
-                timeElement.innerHTML = timeElement.innerHTML.replace(
-                    /Last updated: [^•]+/,
-                    `Last updated: ${now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`
-                );
+        class DashboardManager {
+            constructor() {
+                this.api = window.MissionControlAPI;
+                this.actions = window.MissionControlActions;
+                this.initialized = false;
+                this.autoRefreshInterval = null;
+                this.offlineMode = false;
             }
-            
-            // Simulate status updates
-            const statusIndicators = document.querySelectorAll('.status-indicator');
-            statusIndicators.forEach(indicator => {
-                if (Math.random() > 0.9) {
-                    if (indicator.classList.contains('status-online')) {
-                        indicator.classList.remove('status-online');
-                        indicator.classList.add('status-warning');
-                    } else if (indicator.classList.contains('status-warning')) {
-                        indicator.classList.remove('status-warning');
-                        indicator.classList.add('status-online');
+
+            async initialize() {
+                if (this.initialized) return;
+                
+                console.log('Initializing Mission Control Dashboard...');
+                
+                // Setup event listeners
+                this.setupEventListeners();
+                
+                // Load initial data
+                await this.loadAllData();
+                
+                // Start auto-refresh
+                this.startAutoRefresh();
+                
+                // Setup offline detection
+                this.setupOfflineDetection();
+                
+                this.initialized = true;
+                console.log('Dashboard initialized successfully');
+            }
+
+            setupEventListeners() {
+                // Refresh APIs button
+                const refreshBtn = document.getElementById('refresh-apis');
+                if (refreshBtn) {
+                    refreshBtn.addEventListener('click', () => this.loadAllData());
+                }
+
+                // Manual refresh for each card
+                const cards = document.querySelectorAll('.metric-card');
+                cards.forEach(card => {
+                    card.addEventListener('dblclick', () => {
+                        const cardId = card.id;
+                        this.refreshCardData(cardId);
+                    });
+                });
+            }
+
+            async loadAllData() {
+                try {
+                    // Show loading states
+                    this.setLoadingStates(true);
+                    
+                    // Fetch all data
+                    const data = await this.api.fetchAllData();
+                    
+                    // Update UI with fetched data
+                    this.updateDashboard(data);
+                    
+                    // Update timestamp
+                    this.updateTimestamp(data.timestamp);
+                    
+                    // Check for errors
+                    this.handleDataErrors(data);
+                    
+                } catch (error) {
+                    console.error('Failed to load dashboard data:', error);
+                    this.showToast('Failed to load dashboard data', 'error');
+                    this.setOfflineMode(true);
+                } finally {
+                    this.setLoadingStates(false);
+                }
+            }
+
+            async refreshCardData(cardId) {
+                try {
+                    const card = document.getElementById(cardId);
+                    if (card) {
+                        card.classList.add('loading');
+                        
+                        let data;
+                        switch(cardId) {
+                            case 'projects-card':
+                                data = await this.api.fetchProjects();
+                                this.updateProjects(data);
+                                break;
+                            case 'subagents-card':
+                                data = await this.api.fetchSubagents();
+                                this.updateSubagents(data);
+                                break;
+                            case 'system-health-card':
+                                data = await this.api.checkSystemHealth();
+                                this.updateSystemHealth(data);
+                                break;
+                            case 'lockin-card':
+                                data = await this.api.fetchLastLockIn();
+                                this.updateLastLockIn(data);
+                                break;
+                        }
+                        
+                        this.showToast(`${cardId.replace('-card', '')} data refreshed`, 'success');
+                    }
+                } catch (error) {
+                    console.error(`Failed to refresh ${cardId}:`, error);
+                    this.showToast(`Failed to refresh ${cardId}`, 'error');
+                } finally {
+                    if (card) {
+                        card.classList.remove('loading');
                     }
                 }
-            });
+            }
+
+            updateDashboard(data) {
+                // Update projects
+                if (data.projects && !data.projects.error) {
+                    this.updateProjects(data.projects);
+                }
+
+                // Update subagents
+                if (data.subagents && !data.subagents.error) {
+                    this.updateSubagents(data.subagents);
+                }
+
+                // Update system health
+                if (data.systemHealth && !data.systemHealth.error) {
+                    this.updateSystemHealth(data.systemHealth);
+                }
+
+                // Update last lock-in
+                if (data.lastLockIn && !data.lastLockIn.error) {
+                    this.updateLastLockIn(data.lastLockIn);
+                }
+            }
+
+            updateProjects(projectsData) {
+                const activeEl = document.getElementById('active-projects');
+                const totalEl = document.getElementById('total-projects');
+                const statusEl = document.getElementById('projects-status');
+                
+                if (projectsData.error) {
+                    activeEl.textContent = '--';
+                    totalEl.textContent = '--';
+                    statusEl.innerHTML = '<i class="fas fa-exclamation-circle mr-1"></i>Error';
+                    statusEl.className = 'text-red-400 text-sm';
+                    return;
+                }
+                
+                activeEl.textContent = projectsData.active || 0;
+                totalEl.textContent = projectsData.total || 0;
+                
+                if (projectsData.active > 0) {
+                    statusEl.innerHTML = '<i class="fas fa-check-circle mr-1"></i>Active';
+                    statusEl.className = 'text-green-400 text-sm';
+                } else {
+                    statusEl.innerHTML = '<i class="fas fa-info-circle mr-1"></i>No active projects';
+                    statusEl.className = 'text-blue-400 text-sm';
+                }
+            }
+
+            updateSubagents(subagentsData) {
+                const activeEl = document.getElementById('active-subagents');
+                const totalEl = document.getElementById('total-subagents');
+                const statusEl = document.getElementById('subagents-status');
+                
+                if (subagentsData.error) {
+                    activeEl.textContent = '--';
+                    totalEl.textContent = '--';
+                    statusEl.innerHTML = '<i class="fas fa-exclamation-circle mr-1"></i>Error';
+                    statusEl.className = 'text-red-400 text-sm';
+                    return;
+                }
+                
+                activeEl.textContent = subagentsData.active || 0;
+                totalEl.textContent = subagentsData.total || 0;
+                
+                if (subagentsData.active > 0) {
+                    statusEl.innerHTML = `<i class="fas fa-check-circle mr-1"></i>${subagentsData.active} active`;
+                    statusEl.className = 'text-green-400 text-sm';
+                } else {
+                    statusEl.innerHTML = '<i class="fas fa-info-circle mr-1"></i>No active subagents';
+                    statusEl.className = 'text-blue-400 text-sm';
+                }
+            }
+
+            updateSystemHealth(healthData) {
+                const percentageEl = document.getElementById('health-percentage');
+                const healthyEl = document.getElementById('healthy-systems');
+                const statusEl = document.getElementById('health-status');
+                
+                if (healthData.error) {
+                    percentageEl.textContent = '--%';
+                    healthyEl.textContent = '--';
+                    statusEl.innerHTML = '<i class="fas fa-exclamation-circle mr-1"></i>Error';
+                    statusEl.className = 'text-red-400 text-sm';
+                    return;
+                }
+                
+                const percentage = Math.round((healthData.healthyCount / healthData.totalCount) * 100);
+                percentageEl.textContent = `${percentage}%`;
+                healthyEl.textContent = `${healthData.healthyCount}/${healthData.totalCount}`;
+                
+                // Update API status indicators
+                this.updateAPIStatusIndicators(healthData.data);
+                
+                // Update status text
+                switch(healthData.overallStatus) {
+                    case 'healthy':
+                        statusEl.innerHTML = '<i class="fas fa-check-circle mr-1"></i>All systems healthy';
+                        statusEl.className = 'text-green-400 text-sm';
+                        break;
+                    case 'warning':
+                        statusEl.innerHTML = '<i class="fas fa-exclamation-triangle mr-1"></i>Some issues detected';
+                        statusEl.className = 'text-yellow-400 text-sm';
+                        break;
+                    case 'critical':
+                        statusEl.innerHTML = '<i class="fas fa-times-circle mr-1"></i>Critical issues';
+                        statusEl.className = 'text-red-400 text-sm';
+                        break;
+                }
+            }
+
+            updateAPIStatusIndicators(apiData) {
+                apiData.forEach(api => {
+                    const element = document.querySelector(`[data-api="${api.name.toLowerCase().replace(' ', '-')}"]`);
+                    if (element) {
+                        element.innerHTML = '';
+                        
+                        let icon, text, color;
+                        switch(api.status) {
+                            case 'healthy':
+                                icon = 'fa-check-circle';
+                                text = 'Healthy';
+                                color = 'text-green-400';
+                                break;
+                            case 'unhealthy':
+                                icon = 'fa-exclamation-triangle';
+                                text = 'Unhealthy';
+                                color = 'text-yellow-400';
+                                break;
+                            case 'down':
+                                icon = 'fa-times-circle';
+                                text = 'Down';
+                                color = 'text-red-400';
+                                break;
+                            default:
+                                icon = 'fa-question-circle';
+                                text = 'Unknown';
+                                color = 'text-gray-400';
+                        }
+                        
+                        element.innerHTML = `<i class="fas ${icon} mr-1"></i>${text}`;
+                        element.className = `font-medium ${color}`;
+                        
+                        // Add latency if available
+                        if (api.latency) {
+                            const latencySpan = document.createElement('span');
+                            latencySpan.className = 'text-xs text-gray-400 ml-2';
+                            latencySpan.textContent = `${api.latency}ms`;
+                            element.appendChild(latencySpan);
+                        }
+                    }
+                });
+            }
+
+            updateLastLockIn(lockinData) {
+                const timeEl = document.getElementById('last-lockin-time');
+                const dateEl = document.getElementById('last-lockin-date');
+                const statusEl = document.getElementById('lockin-status');
+                
+                if (lockinData.error) {
+                    timeEl.textContent = '--:--';
+                    dateEl.textContent = '--';
+                    statusEl.innerHTML = '<i class="fas fa-exclamation-circle mr-1"></i>Error';
+                    statusEl.className = 'text-red-400 text-sm';
+                    return;
+                }
+                
+                const timestamp = lockinData.lastTimestamp;
+                if (timestamp) {
+                    const date = new Date(timestamp);
+                    timeEl.textContent = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    dateEl.textContent = date.toLocaleDateString();
+                    statusEl.innerHTML = '<i class="fas fa-check-circle mr-1"></i>Updated';
+                    statusEl.className = 'text-green-400 text-sm';
+                } else {
+                    timeEl.textContent = '--:--';
+                    dateEl.textContent = 'No data';
+                    statusEl.innerHTML = '<i class="fas fa-info-circle mr-1"></i>No lock-in data';
+                    statusEl.className = 'text-blue-400 text-sm';
+                }
+            }
+
+            updateTimestamp(timestamp) {
+                const timestampEl = document.getElementById('data-timestamp');
+                const footerEl = document.querySelector('footer p');
+                
+                const date = new Date(timestamp);
+                const timeString = date.toLocaleTimeString([], { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                
+                if (timestampEl) {
+                    timestampEl.textContent = timeString;
+                }
+                
+                if (footerEl) {
+                    footerEl.innerHTML = footerEl.innerHTML.replace(
+                        /Last updated: [^•]+/,
+                        `Last updated: ${timeString}`
+                    );
+                }
+            }
+
+            handleDataErrors(data) {
+                const errors = [];
+                
+                if (data.projects?.error) errors.push('Projects');
+                if (data.subagents?.error) errors.push('Subagents');
+                if (data.systemHealth?.error) errors.push('System Health');
+                if (data.lastLockIn?.error) errors.push('Last Lock-in');
+                
+                if (errors.length > 0) {
+                    console.warn('Data errors detected:', errors);
+                    
+                    if (errors.length >= 3) {
+                        this.setOfflineMode(true);
+                    }
+                } else {
+                    this.setOfflineMode(false);
+                }
+            }
+
+            setLoadingStates(isLoading) {
+                const statusEl = document.getElementById('actions-status');
+                const refreshBtn = document.getElementById('refresh-apis');
+                
+                if (isLoading) {
+                    if (statusEl) {
+                        statusEl.textContent = 'Loading...';
+                        statusEl.className = 'text-xs text-yellow-400';
+                    }
+                    if (refreshBtn) {
+                        refreshBtn.disabled = true;
+                        refreshBtn.innerHTML = '<i class="fas fa-sync fa-spin mr-1"></i>Refreshing';
+                        refreshBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                    }
+                } else {
+                    if (statusEl) {
+                        statusEl.textContent = this.offlineMode ? 'Offline' : 'Ready';
+                        statusEl.className = this.offlineMode ? 'text-xs text-red-400' : 'text-xs text-green-400';
+                    }
+                    if (refreshBtn) {
+                        refreshBtn.disabled = false;
+                        refreshBtn.innerHTML = '<i class="fas fa-sync mr-1"></i>Refresh';
+                        refreshBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    }
+                }
+            }
+
+            setOfflineMode(isOffline) {
+                this.offlineMode = isOffline;
+                
+                // Show/hide offline indicator
+                let indicator = document.getElementById('offline-indicator');
+                
+                if (isOffline && !indicator) {
+                    indicator = document.createElement('div');
+                    indicator.id = 'offline-indicator';
+                    indicator.className = 'offline-indicator';
+                    indicator.innerHTML = '<i class="fas fa-wifi-slash mr-2"></i>Offline Mode - Using cached data';
+                    document.body.appendChild(indicator);
+                } else if (!isOffline && indicator) {
+                    indicator.remove();
+                }
+                
+                // Update status
+                this.setLoadingStates(false);
+            }
+
+            startAutoRefresh() {
+                // Clear existing interval
+                if (this.autoRefreshInterval) {
+                    clearInterval(this.autoRefreshInterval);
+                }
+                
+                // Set new interval (every 30 seconds)
+                this.autoRefreshInterval = setInterval(() => {
+                    if (!this.offlineMode) {
+                        this.loadAllData();
+                    }
+                }, 30000);
+            }
+
+            setupOfflineDetection() {
+                window.addEventListener('online', () => {
+                    console.log('Network connection restored');
+                    this.setOfflineMode(false);
+                    this.loadAllData();
+                });
+                
+                window.addEventListener('offline', () => {
+                    console.log('Network connection lost');
+                    this.setOfflineMode(true);
+                });
+            }
+
+            showToast(message, type = 'info') {
+                // Remove existing toasts
+                document.querySelectorAll('.toast').forEach(toast => toast.remove());
+                
+                // Create new toast
+                const toast = document.createElement('div');
+                toast.className = `toast toast-${type}`;
+                toast.textContent = message;
+                
+                document.body.appendChild(toast);
+                
+                // Auto-remove after 3 seconds
+                setTimeout(() => {
+                    toast.remove();
+                }, 3000);
+            }
         }
-        
-        // Auto-refresh every 30 seconds
-        setInterval(refreshData, 30000);
-        
-        // Add click handlers to quick action buttons
-        document.addEventListener('DOMContentLoaded', function() {
-            const quickActionButtons = document.querySelectorAll('.grid button');
-            quickActionButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const actionText = this.querySelector('span').textContent;
-                    alert(`Action "${actionText}" would be performed in a real application.`);
-                });
-            });
-            
-            // Add hover effects to table rows
-            const tableRows = document.querySelectorAll('tbody tr');
-            tableRows.forEach(row => {
-                row.addEventListener('mouseenter', function() {
-                    this.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
-                });
-                row.addEventListener('mouseleave', function() {
-                    this.style.backgroundColor = '';
-                });
-            });
+
+        // Initialize dashboard when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            window.dashboardManager = new DashboardManager();
+            window.dashboardManager.initialize();
         });
     </script>
 </body>
