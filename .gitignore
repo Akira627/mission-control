@@ -146,3 +146,4 @@ Thumbs.db
 # Custom
 assets/js/bundle.js
 assets/css/bundle.css
+.vercel

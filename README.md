@@ -143,6 +143,37 @@ Deploy to any static hosting service:
 - Vercel
 - AWS S3 + CloudFront
 
+### Vercel Deployment (Current)
+The dashboard is deployed to Vercel at: **https://mission-control-chi-two.vercel.app**
+
+To deploy to Vercel:
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Deploy with token
+vercel --token YOUR_VERCEL_TOKEN --yes --prod
+```
+
+Configuration (`vercel.json`):
+```json
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "index.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
+}
+```
+
 ### Docker Container
 Create a Docker container for easy deployment:
 
