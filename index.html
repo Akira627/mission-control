@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mission Control Dashboard</title>
+    <!-- Tailwind CSS v3 CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom styles -->
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --secondary-color: #10b981;
+            --accent-color: #8b5cf6;
+            --dark-bg: #0f172a;
+            --card-bg: #1e293b;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--dark-bg);
+            color: #f8fafc;
+        }
+        
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        
+        .status-online {
+            background-color: #10b981;
+            box-shadow: 0 0 10px #10b981;
+        }
+        
+        .status-offline {
+            background-color: #ef4444;
+        }
+        
+        .status-warning {
+            background-color: #f59e0b;
+            box-shadow: 0 0 10px #f59e0b;
+        }
+        
+        .grid-item {
+            transition: all 0.3s ease;
+        }
+        
+        .grid-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .metric-card {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .metric-card.warning {
+            border-left-color: #f59e0b;
+        }
+        
+        .metric-card.critical {
+            border-left-color: #ef4444;
+        }
+        
+        .metric-card.success {
+            border-left-color: #10b981;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Navigation -->
+    <nav class="glass-card sticky top-0 z-50 border-b border-gray-800">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-satellite text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold">Mission Control</h1>
+                        <p class="text-xs text-gray-400">Real-time System Dashboard</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="hidden md:flex items-center space-x-6">
+                        <a href="#" class="text-gray-300 hover:text-white transition">Overview</a>
+                        <a href="#" class="text-gray-300 hover:text-white transition">Agents</a>
+                        <a href="#" class="text-gray-300 hover:text-white transition">Systems</a>
+                        <a href="#" class="text-gray-300 hover:text-white transition">Analytics</a>
+                        <a href="#" class="text-gray-300 hover:text-white transition">Settings</a>
+                    </div>
+                    
+                    <div class="flex items-center space-x-3">
+                        <div class="relative">
+                            <span class="status-indicator status-online"></span>
+                            <span class="text-sm">All Systems Operational</span>
+                        </div>
+                        <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+                            <i class="fas fa-plus mr-2"></i>New Alert
+                        </button>
+                        <div class="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-6">
+        <!-- Header Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div class="metric-card p-5 rounded-xl">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-gray-400 text-sm">Active Agents</p>
+                        <h3 class="text-2xl font-bold mt-1">12</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-900/30 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-robot text-blue-400 text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <span class="text-green-400 text-sm"><i class="fas fa-arrow-up mr-1"></i>+2 today</span>
+                </div>
+            </div>
+            
+            <div class="metric-card p-5 rounded-xl">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-gray-400 text-sm">System Health</p>
+                        <h3 class="text-2xl font-bold mt-1">98%</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-green-900/30 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-heartbeat text-green-400 text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <span class="text-green-400 text-sm"><i class="fas fa-check-circle mr-1"></i>All systems normal</span>
+                </div>
+            </div>
+            
+            <div class="metric-card warning p-5 rounded-xl">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-gray-400 text-sm">Pending Tasks</p>
+                        <h3 class="text-2xl font-bold mt-1">7</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-yellow-900/30 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-tasks text-yellow-400 text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <span class="text-yellow-400 text-sm"><i class="fas fa-exclamation-circle mr-1"></i>3 high priority</span>
+                </div>
+            </div>
+            
+            <div class="metric-card p-5 rounded-xl">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-gray-400 text-sm">Uptime (30d)</p>
+                        <h3 class="text-2xl font-bold mt-1">99.9%</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-purple-900/30 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-server text-purple-400 text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <span class="text-green-400 text-sm"><i class="fas fa-chart-line mr-1"></i>+0.1% from last month</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Dashboard Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left Column -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Agent Status Panel -->
+                <div class="glass-card p-6 rounded-xl">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-bold">Agent Status</h2>
+                        <div class="flex space-x-2">
+                            <button class="px-3 py-1 bg-gray-800 hover:bg-gray-700 rounded-lg text-sm transition">All</button>
+                            <button class="px-3 py-1 bg-gray-800 hover:bg-gray-700 rounded-lg text-sm transition">Active</button>
+                            <button class="px-3 py-1 bg-gray-800 hover:bg-gray-700 rounded-lg text-sm transition">Idle</button>
+                        </div>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="text-left text-gray-400 border-b border-gray-800">
+                                    <th class="pb-3">Agent</th>
+                                    <th class="pb-3">Status</th>
+                                    <th class="pb-3">CPU</th>
+                                    <th class="pb-3">Memory</th>
+                                    <th class="pb-3">Last Activity</th>
+                                    <th class="pb-3">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b border-gray-800/50">
+                                    <td class="py-4">
+                                        <div class="flex items-center">
+                                            <div class="w-8 h-8 bg-blue-900/30 rounded-lg flex items-center justify-center mr-3">
+                                                <i class="fas fa-brain text-blue-400"></i>
+                                            </div>
+                                            <div>
+                                                <p class="font-medium">Main Agent</p>
+                                                <p class="text-xs text-gray-400">Core System</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-4">
+                                        <span class="status-indicator status-online"></span>
+                                        <span>Online</span>
+                                    </td>
+                                    <td class="py-4">
+                                        <div class="w-full bg-gray-800 rounded-full h-2">
+                                            <div class="bg-green-500 h-2 rounded-full" style="width: 45%"></div>
+                                        </div>
+                                        <span class="text-xs text-gray-400 mt-1 block">45%</span>
+                                    </td>
+                                    <td class="py-4">
+                                        <div class="w-full bg-gray-800 rounded-full h-2">
+                                            <div class="bg-blue-500 h-2 rounded-full" style="width: 68%"></div>
+                                        </div>
+                                        <span class="text-xs text-gray-400 mt-1 block">68%</span>
+                                    </td>
+                                    <td class="py-4">
+                                        <span class="text-sm">2 min ago</span>
+                                    </td>
+                                    <td class="py-4">
+                                        <button class="px-3 py-1 bg-gray-800 hover:bg-gray-700 rounded text-sm transition">
+                                            <i class="fas fa-cog"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                
+                                <tr class="border-b border-gray-800/50">
+                                    <td class="py-4">
+                                        <div class="flex items-center">
+                                            <div class="w-8 h-8 bg-green-900/30 rounded-lg flex items-center justify-center mr-3">
+                                                <i class="fas fa-search text-green-400"></i>
+                                            </div>
+                                            <div>
+                                                <p class="font-medium">Scout</p>
+                                                <p class="text-xs text-gray-400">Research Specialist</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-4">
+                                        <span class="status-indicator status-online"></span>
+                                        <span>Online</span>
+                                    </td>
+                                    <td class="py-4">
+                                        <div class="w-full bg-gray-800 rounded-full h-2">
+                                            <div class="bg-green-500 h-2 rounded-full" style="width: 32%"></div>
+                                        </div>
+                                        <span class="text-xs text-gray-400 mt-1 block">32%</span>
+                                    </td>
+                                    <td class="py-4">
+                                        <div class="w-full bg-gray-800 rounded-full h-2">
+                                            <div class="bg-blue-500 h-2 rounded-full" style="width: 41%"></div>
+                                        </div>
+                                        <span class="text-xs text-gray-400 mt-1 block">41%</span>
+                                    </td>
+                                    <td class="py-4">
+                                        <span class="text-sm">5 min ago</span>
+                                    </td>
+                                    <td class="py-4">
+                                        <button class="px-3 py-1 bg-gray-800 hover:bg-gray-700 rounded text-sm transition">
+                                            <i class="fas fa-cog"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                
+                                <tr class="border-b border-gray-800/50">
+                                    <td class="py-4">
+                                        <div class="flex items-center">
+                                            <div class="w-8 h-8 bg-purple-900/30 rounded-lg flex items-center justify-center mr-3">
+                                                <i class="fas fa-code text-purple-400"></i>
+                                            </div>
+                                            <div>
+                                                <p class="font-medium">Architect</p>
+                                                <p class="text-xs text-gray-400">Development Specialist</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-4">
+                                        <span class="status-indicator status-online"></span>
+                                        <span>Online</span>
+                                    </td>
+                                    <td class="py-4">
+                                        <div class="w-full bg-gray-800 rounded-full h-2">
+                                            <div class="bg-green-500 h-2 rounded-full" style="width: 78%"></div>
+                                        </div>
+                                        <span class="text-xs text-gray-400 mt-1 block">78%</span>
+                                    </td>
+                                    <td class="py-4">
+                                        <div class="w-full bg-gray-800 rounded-full h-2">
+                                            <div class="bg-blue-500 h-2 rounded-full" style="width: 85%"></div>
+                                        </div>
+                                        <span class="text-xs text-gray-400 mt-1 block">85%</span>
+                                    </td>
+                                    <td class="py-4">
+                                        <span class="text-sm">Just now</span>
+                                    </td>
+                                    <td class="py-4">
+                                        <button class="px-3 py-1 bg-gray-800 hover:bg-gray-700 rounded text-sm transition">
+                                            <i class="fas fa-cog"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td class="py-4">
+                                        <div class="flex items-center">
+                                            <div class="w-8 h-8 bg-yellow-900/30 rounded-lg flex items-center justify-center mr-3">
+                                                <i class="fas fa-book text-yellow-400"></i>
+                                            </div>
+                                            <div>
+                                                <p class="font-medium">Librarian</p>
+                                                <p class="text-xs text-gray-400">Information Specialist</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-4">
+                                        <span class="status-indicator status-warning"></span>
+                                        <span>Idle</span>
+                                    </td>
+                                    <td class="py-4">
+                                        <div class="w-full bg-gray-800 rounded-full h-2">
+                                            <div class="bg-green-500 h-2 rounded-full" style="width: 12%"></div>
+                                        </div>
+                                        <span class="text-xs text-gray-400 mt-1 block">12%</span>
+                                    </td>
+                                    <td class="py-4">
+                                        <div class="w-full bg-gray-800 rounded-full h-2">
+                                            <div class="bg-blue-500 h-2 rounded-full" style="width: 24%"></div>
+                                        </div>
+                                        <span class="text-xs text-gray-400 mt-1 block">24%</span>
+                                    </td>
+                                    <td class="py-4">
+                                        <span class="text-sm">1 hour ago</span>
+                                    </td>
+                                    <td class="py-4">
+                                        <button class="px-3 py-1 bg-gray-800 hover:bg-gray-700 rounded text-sm transition">
+                                            <i class="fas fa-cog"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- System Activity Chart -->
+                <div class="glass-card p-6 rounded-xl">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-bold">System Activity (24h)</h2>
+                        <div class="flex space-x-2">
+                            <button class="px-3 py-1 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm transition">Day</button>
+                            <button class="px-3 py-1 bg-gray-800 hover:bg-gray-700 rounded-lg text-sm transition">Week</button>
+                            <button class="px-3 py-1 bg-gray-800 hover:bg-gray-700 rounded-lg text-sm transition">Month</button>
+                        </div>
+                    </div>
+                    
+                    <div class="h-64 flex items-end space-x-2 pt-6">
+                        <!-- Chart bars would go here -->
+                        <div class="flex-1 flex flex-col items-center">
+                            <div class="w-full bg-gradient-to-t from-blue-500 to-blue-700 rounded-t-lg" style="height: 80%"></div>
+                            <span class="text-xs text-gray-400 mt-2">12 AM</span>
+                        </div>
+                        <div class="flex-1 flex flex-col items-center">
+                            <div class="w-full bg-gradient-to-t from-blue-500 to-blue-700 rounded-t-lg" style="height: 65%"></div>
+                            <span class="text-xs text-gray-400 mt-2">3 AM</span>
+                        </div>
+                        <div class="flex-1 flex flex-col items-center">
+                            <div class="w-full bg-gradient-to-t from-blue-500 to-blue-700 rounded-t-lg" style="height: 45%"></div>
+                            <span class="text-xs text-gray-400 mt-2">6 AM</span>
+                        </div>
+                        <div class="flex-1 flex flex-col items-center">
+                            <div class="w-full bg-gradient-to-t from-blue-500 to-blue-700 rounded-t-lg" style="height: 30%"></div>
+                            <span class="text-xs text-gray-400 mt-2">9 AM</span>
+                        </div>
+                        <div class="flex-1 flex flex-col items-center">
+                            <div class="w-full bg-gradient-to-t from-green-500 to-green-700 rounded-t-lg" style="height: 75%"></div>
+                            <span class="text-xs text-gray-400 mt-2">12 PM</span>
+                        </div>
+                        <div class="flex-1 flex flex-col items-center">
+                            <div class="w-full bg-gradient-to-t from-green-500 to-green-700 rounded-t-lg" style="height: 90%"></div>
+                            <span class="text-xs text-gray-400 mt-2">3 PM</span>
+                        </div>
+                        <div class="flex-1 flex flex-col items-center">
+                            <div class="w-full bg-gradient-to-t from-green-500 to-green-700 rounded-t-lg" style="height: 85%"></div>
+                            <span class="text-xs text-gray-400 mt-2">6 PM</span>
+                        </div>
+                        <div class="flex-1 flex flex-col items-center">
+                            <div class="w-full bg-gradient-to-t from-purple-500 to-purple-700 rounded-t-lg" style="height: 60%"></div>
+                            <span class="text-xs text-gray-400 mt-2">9 PM</span>
+                        </div>
+                    </div>
+                    <div class="flex justify-between mt-4 text-sm text-gray-400">
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
+                            <span>Low Activity</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
+                            <span>Normal Activity</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 bg-purple-500 rounded-full mr-2"></div>
+                            <span>High Activity</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column -->
+            <div class="space-y-6">
+                <!-- Recent Alerts -->
+                <div class="glass-card p-6 rounded-xl">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-bold">Recent Alerts</h2>
+                        <span class="text-xs text-gray-400">Last 24 hours</span>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="p-3 bg-red-900/20 border-l-4 border-red-500 rounded-r">
+                            <div class="flex justify-between">
+                                <span class="font-medium text-sm">High CPU Usage</span>
+                                <span class="text-xs text-gray-400">10 min ago</span>
+                            </div>
+                            <p class="text-xs text-gray-300 mt-1">Agent "Architect" reached 85% CPU utilization</p>
+                        </div>
+                        
+                        <div class="p-3 bg-yellow-900/20 border-l-4 border-yellow-500 rounded-r">
+                            <div class="flex justify-between">
+                                <span class="font-medium text-sm">Memory Warning</span>
+                                <span class="text-xs text-gray-400">45 min ago</span>
+                            </div>
+                            <p class="text-xs text-gray-300 mt-1">System memory usage above 80% threshold</p>
+                        </div>
+                        
+                        <div class="p-3 bg-blue-900/20 border-l-4 border-blue-500 rounded-r">
+                            <div class="flex justify-between">
+                                <span class="font-medium text-sm">New Agent Online</span>
+                                <span class="text-xs text-gray-400">2 hours ago</span>
+                            </div>
+                            <p class="text-xs text-gray-300 mt-1">"Scout" agent came online</p>
+                        </div>
+                        
+                        <div class="p-3 bg-green-900/20 border-l-4 border-green-500 rounded-r">
+                            <div class="flex justify-between">
+                                <span class="font-medium text-sm">Task Completed</span>
+                                <span class="text-xs text-gray-400">3 hours ago</span>
+                            </div>
+                            <p class="text-xs text-gray-300 mt-1">"Main Agent" completed scheduled maintenance</p>
+                        </div>
+                    </div>
+                    
+                    <button class="w-full mt-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-sm transition">
+                        View All Alerts
+                    </button>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="glass-card p-6 rounded-xl">
+                    <h2 class="text-lg font-bold mb-4">Quick Actions</h2>
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <button class="p-4 bg-blue-900/30 hover:bg-blue-900/50 rounded-xl flex flex-col items-center justify-center transition">
+                            <i class="fas fa-plus text-blue-400 text-xl mb-2"></i>
+                            <span class="text-sm">New Agent</span>
+                        </button>
+                        
+                        <button class="p-4 bg-green-900/30 hover:bg-green-900/50 rounded-xl flex flex-col items-center justify-center transition">
+                            <i class="fas fa-play text-green-400 text-xl mb-2"></i>
+                            <span class="text-sm">Start All</span>
+                        </button>
+                        
+                        <button class="p-4 bg-yellow-900/30 hover:bg-yellow-900/50 rounded-xl flex flex-col items-center justify-center transition">
+                            <i class="fas fa-pause text-yellow-400 text-xl mb-2"></i>
+                            <span class="text-sm">Pause All</span>
+                        </button>
+                        
+                        <button class="p-4 bg-purple-900/30 hover:bg-purple-900/50 rounded-xl flex flex-col items-center justify-center transition">
+                            <i class="fas fa-chart-bar text-purple-400 text-xl mb-2"></i>
+                            <span class="text-sm">Reports</span>
+                        </button>
+                        
+                        <button class="p-4 bg-red-900/30 hover:bg-red-900/50 rounded-xl flex flex-col items-center justify-center transition">
+                            <i class="fas fa-exclamation-triangle text-red-400 text-xl mb-2"></i>
+                            <span class="text-sm">Emergency</span>
+                        </button>
+                        
+                        <button class="p-4 bg-gray-800 hover:bg-gray-700 rounded-xl flex flex-col items-center justify-center transition">
+                            <i class="fas fa-cog text-gray-400 text-xl mb-2"></i>
+                            <span class="text-sm">Settings</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- System Info -->
+                <div class="glass-card p-6 rounded-xl">
+                    <h2 class="text-lg font-bold mb-4">System Information</h2>
+                    
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Platform</span>
+                            <span class="font-medium">OpenClaw v2.4.1</span>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Uptime</span>
+                            <span class="font-medium">14 days, 6:32:15</span>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Total Agents</span>
+                            <span class="font-medium">12 / 25 max</span>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Last Backup</span>
+                            <span class="font-medium">Today, 02:00 AM</span>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Next Maintenance</span>
+                            <span class="font-medium">Tomorrow, 03:00 AM</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 pt-4 border-t border-gray-800">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-400">Storage</span>
+                            <span class="font-medium">78% used</span>
+                        </div>
+                        <div class="w-full bg-gray-800 rounded-full h-2 mt-2">
+                            <div class="bg-blue-500 h-2 rounded-full" style="width: 78%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="mt-8 pt-6 border-t border-gray-800 text-center text-gray-500 text-sm">
+            <p>Mission Control Dashboard v1.0 • Last updated: Just now • <span class="text-green-400">All systems operational</span></p>
+            <p class="mt-1">© 2026 OpenClaw Systems. Monitoring 12 agents across 3 nodes.</p>
+        </div>
+    </main>
+
+    <!-- JavaScript for interactivity -->
+    <script>
+        // Simple refresh for demo purposes
+        function refreshData() {
+            // Simulate data refresh
+            const timeElement = document.querySelector('footer p');
+            if (timeElement) {
+                const now = new Date();
+                timeElement.innerHTML = timeElement.innerHTML.replace(
+                    /Last updated: [^•]+/,
+                    `Last updated: ${now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`
+                );
+            }
+            
+            // Simulate status updates
+            const statusIndicators = document.querySelectorAll('.status-indicator');
+            statusIndicators.forEach(indicator => {
+                if (Math.random() > 0.9) {
+                    if (indicator.classList.contains('status-online')) {
+                        indicator.classList.remove('status-online');
+                        indicator.classList.add('status-warning');
+                    } else if (indicator.classList.contains('status-warning')) {
+                        indicator.classList.remove('status-warning');
+                        indicator.classList.add('status-online');
+                    }
+                }
+            });
+        }
+        
+        // Auto-refresh every 30 seconds
+        setInterval(refreshData, 30000);
+        
+        // Add click handlers to quick action buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            const quickActionButtons = document.querySelectorAll('.grid button');
+            quickActionButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const actionText = this.querySelector('span').textContent;
+                    alert(`Action "${actionText}" would be performed in a real application.`);
+                });
+            });
+            
+            // Add hover effects to table rows
+            const tableRows = document.querySelectorAll('tbody tr');
+            tableRows.forEach(row => {
+                row.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                });
+                row.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = '';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

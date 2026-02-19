@@ -1,0 +1,45 @@
+{
+  "name": "mission-control-dashboard",
+  "version": "1.0.0",
+  "description": "A real-time monitoring dashboard for OpenClaw agent systems",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx http-server -p 8080",
+    "dev": "npx live-server --port=8080",
+    "build": "echo 'No build step required for static HTML'",
+    "test": "echo 'No tests configured'",
+    "lint": "echo 'No linter configured'",
+    "format": "prettier --write \"**/*.{html,css,js,md,json}\"",
+    "deploy": "echo 'Add deployment script'"
+  },
+  "keywords": [
+    "dashboard",
+    "monitoring",
+    "openclaw",
+    "agents",
+    "real-time",
+    "tailwindcss"
+  ],
+  "author": "OpenClaw Systems",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/openclaw/mission-control.git"
+  },
+  "bugs": {
+    "url": "https://github.com/openclaw/mission-control/issues"
+  },
+  "homepage": "https://github.com/openclaw/mission-control#readme",
+  "devDependencies": {
+    "prettier": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "browserslist": [
+    "defaults",
+    "not IE 11",
+    "maintained node versions"
+  ]
+}

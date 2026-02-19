@@ -1,0 +1,202 @@
+/* mission-control/assets/css/custom.css */
+
+/* Additional custom styles for Mission Control Dashboard */
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #1e293b;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #475569;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+}
+
+/* Print styles */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    
+    body {
+        background: white !important;
+        color: black !important;
+    }
+    
+    .glass-card {
+        background: white !important;
+        border: 1px solid #ddd !important;
+        box-shadow: none !important;
+    }
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    :root {
+        --primary-color: #0056b3;
+        --secondary-color: #006400;
+        --accent-color: #4b0082;
+    }
+    
+    .status-indicator {
+        border: 1px solid white;
+    }
+}
+
+/* Dark mode adjustments (already dark by default) */
+@media (prefers-color-scheme: light) {
+    body {
+        background-color: #f8fafc;
+        color: #1e293b;
+    }
+    
+    .glass-card {
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    
+    .metric-card {
+        background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+        border-left: 4px solid var(--primary-color);
+    }
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    .hidden-mobile {
+        display: none !important;
+    }
+    
+    .metric-card {
+        padding: 1rem !important;
+    }
+    
+    .grid-cols-2 {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* Loading animations */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.loading {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Tooltip styles */
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltip-text {
+    visibility: hidden;
+    width: 200px;
+    background-color: #1e293b;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -100px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    border: 1px solid #475569;
+    font-size: 12px;
+}
+
+.tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Focus styles for accessibility */
+:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+:focus:not(:focus-visible) {
+    outline: none;
+}
+
+:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+/* Utility classes */
+.text-shadow {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Chart placeholder animation */
+.chart-placeholder {
+    background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
